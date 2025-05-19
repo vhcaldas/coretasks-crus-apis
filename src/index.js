@@ -1,23 +1,33 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import pool from './config/db.js'; 
+import taskRoutes from './routes/taskRoutes.js';
+import errorHandling from './middlewares/errorHandler.js';
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 //Middelwares
 
 app.use(express.json());
-app.use(cors);
+app.use(cors());
 
 //Routes
-app.get('/', (req, res) => {
-  res.send('Hello World');
-});
+app.use('/api', taskRoutes);
 
 //Error handling middleware
+app.use(errorHandling);
+
+//Testing PostgreSQL connection
+app.get("/", async (req, res) => {
+  console.log("Start");
+  const result = await pool.query("SELECT current_database()");
+  console.log("result", result.rows);
+  res.send(`The database name is : ${result.rows[0].current_database}`);
+});
 
 //Server running
 app.listen(port, () => {
