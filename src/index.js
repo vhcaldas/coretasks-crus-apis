@@ -4,22 +4,22 @@ import dotenv from 'dotenv';
 import pool from './config/db.js'; 
 import taskRoutes from './routes/taskRoutes.js';
 import errorHandling from './middlewares/errorHandler.js';
+import createTaskTable from './data/createTaskTable.js';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;
 
-//Middelwares
 
 app.use(express.json());
 app.use(cors());
 
-//Routes
 app.use('/api', taskRoutes);
 
-//Error handling middleware
 app.use(errorHandling);
+
+createTaskTable();
 
 //Testing PostgreSQL connection
 app.get("/", async (req, res) => {
